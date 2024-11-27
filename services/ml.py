@@ -2,12 +2,13 @@ import torch
 import base64
 from io import BytesIO
 from typing import List, Dict, Any
-from ml.lifespan import device, imagebind_model
+from ml.lifespan import device, imagebind_model, llm
 from imagebind.model import ModalityType
 from imagebind.utils import data
 
 from repositories.documents import DocumentRepository
 from schemas.documnet import CreateDocumentOpts
+from ml.constants import SYSTEM_PROMPT
 from ml.utils import DocxProcessor, PdfProcessor
 
 
@@ -65,3 +66,37 @@ class MlService:
             documents.append(document_opt)
 
         self.document_repository.create_document(documents)
+
+    def get_relevant_chunks(self, query: str, top_k: int = 2) -> List[Dict[str, Any]]:
+        """
+        Принимает запрос пользователя, находит и возвращает топ-K релевантных чанков.
+
+        :param query: Текст запроса пользователя.
+        :param top_k: Количество возвращаемых релевантных чанков (по умолчанию 2).
+        :return: Список релевантных чанков с метаданными.
+        """
+        query_embedding = self._extract_text_embedding(query).squeeze().tolist()
+
+        hits = self.document_repository.get_document(query_vector=query_embedding, top_k=top_k)
+
+        relevant_chunks = []
+        for hit in hits:
+            payload = hit.payload
+            relevant_chunks.append({
+                "text": payload.get("text"),
+                "metadata": payload,
+                "score": hit.score,
+            })
+
+        return relevant_chunks
+
+    def _generate_answer(self, question: str, rag_answer: str) -> str:
+
+        llm.add_message("system", SYSTEM_PROMPT.format(rag_answer))
+        if question != "":
+            llm.add_message("user", question)
+
+        answer = llm.inference()
+        #TODO: Добавить проверку на галюцинации
+        return answer
+

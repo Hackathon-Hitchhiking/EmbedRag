@@ -30,5 +30,5 @@ class DocumentRepository:
         hits = self.client.search(
             collection_name=self.collection, query_vector=query_vector, limit=top_k
         )
-
         return hits
+
