@@ -11,9 +11,7 @@ client = QdrantClient(host=env.QDRANT_HOST, port=env.QDRANT_PORT)
 if not client.collection_exists(env.QDRANT_COLLECTION):
     client.create_collection(
         collection_name=env.QDRANT_COLLECTION,
-        vectors_config=VectorParams(size=100, distance=Distance.COSINE),
+        vectors_config=VectorParams(size=1024, distance=Distance.COSINE),
     )
-
-
 def get_client() -> QdrantClient:
     yield client

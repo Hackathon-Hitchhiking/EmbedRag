@@ -14,6 +14,12 @@ class EnvironmentSettings(BaseSettings):
     QDRANT_PORT: int
     QDRANT_COLLECTION: str
 
+    #DELETE if need
+    MINIO_BASE_BUCKET: str
+    MINIO_HOST: str
+    MINIO_SECRET: str
+    MINIO_ACCESS: str
+
     DEBUG: bool
 
     class Config:
