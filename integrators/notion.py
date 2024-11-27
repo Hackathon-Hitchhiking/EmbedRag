@@ -1,6 +1,6 @@
 from typing import List
 
-from importers.base import BaseIntegrator
+from integrators.base import BaseIntegrator
 from notion_client import Client
 
 from schemas.integrations import PageResponse

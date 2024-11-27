@@ -2,8 +2,8 @@ from typing import List
 
 from atlassian import confluence
 
-from importers.base import BaseIntegrator
-from schemas.integrations import PageResponse
+from integrators.base import BaseIntegrator
+from schemas.integrations import PageResponse, ResponseType
 
 
 class ConfluenceIntegration(BaseIntegrator):
@@ -20,7 +20,7 @@ class ConfluenceIntegration(BaseIntegrator):
         for page in pages:
             response = self._conn.get_page_as_pdf(page["id"])
 
-            pdfs.append(PageResponse(title=page["title"], content=response))
+            pdfs.append(PageResponse(title=page["title"], content=response, type=ResponseType.PDF))
 
         return pdfs
 

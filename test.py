@@ -1,12 +1,9 @@
-import numpy as np
+from integrators.notion import NotionIntegration
 
-from configs.Qdrant import client
-from repositories.documents import DocumentRepository
 
-client = client
 
-repo = DocumentRepository(client)
+integrator = NotionIntegration(api_token="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")
 
-ls = np.random.rand(100, 100).tolist()
+resp = integrator.fetch_data("4391404cb6bb46f8ab26b9e9a2128658")
 
-print(repo.get_document(ls[0], 1))
+print(resp)
